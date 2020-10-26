@@ -52,7 +52,7 @@ class KeyboardViewController: UIInputViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // 默认初始化为拼音输入法
-        keyboardType = .letter//.pinyin
+        keyboardType = .pinyin
     }
     
     override func didReceiveMemoryWarning() {

@@ -29,6 +29,10 @@ enum KeyType {
     case numberSwitch
     case CHSwitch
     case changeToLetter
+    
+    case letterSymbol
+    case symbolSwitch
+    case numberToLetter
 }
 
 enum CapitalType {

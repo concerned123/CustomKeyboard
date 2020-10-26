@@ -68,6 +68,11 @@ class KeyView: UIControl {
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesBegan(touches, with: event)
+        // 大小写类型按键不显示
+        if key.type == .capital {
+            return
+        }
+        
         let color = self.backgroundColor
         if color == UIColor.white {
             self.backgroundColor = grayColor
@@ -78,7 +83,6 @@ class KeyView: UIControl {
             }
         }
     }
-
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
@@ -99,9 +103,10 @@ class KeyView: UIControl {
              .pinyin,
              .reType,
              // 新增类型
-             .capital,
              .numberSwitch,
-             .CHSwitch:
+             .CHSwitch,
+             .numberToLetter,
+             .symbolSwitch:
             backgroundColor = grayColor
         case .return:
             backgroundColor = blueColor
@@ -110,15 +115,18 @@ class KeyView: UIControl {
             backgroundColor = UIColor.white
         }
         
-        if key.type == .capital {
+        if type == .capital {
             if key.capitalType == .lowercaseType {
                 iconImageView.image = UIImage(named: "capital_select")
+                backgroundColor = grayColor
             } else if key.capitalType == .uppercaseType {
                 iconImageView.image = UIImage(named: "capital")
                 backgroundColor = UIColor.white
+            } else if key.capitalType == .alwaysUppercaseType {
+                iconImageView.image = UIImage(named: "capital_lock")
+                backgroundColor = UIColor.white
             }
         }
-
     }
 }
 
