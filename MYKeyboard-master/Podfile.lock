@@ -1,0 +1,22 @@
+PODS:
+  - FMDB (2.7.5):
+    - FMDB/standard (= 2.7.5)
+  - FMDB/standard (2.7.5)
+  - SnapKit (5.0.1)
+
+DEPENDENCIES:
+  - FMDB (~> 2.7.5)
+  - SnapKit
+
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - FMDB
+    - SnapKit
+
+SPEC CHECKSUMS:
+  FMDB: 2ce00b547f966261cd18927a3ddb07cb6f3db82a
+  SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
+
+PODFILE CHECKSUM: b47fc8cf9c748f6ae4429a1f0044bed70a975226
+
+COCOAPODS: 1.9.3
