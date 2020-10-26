@@ -10,8 +10,8 @@ import UIKit
 import SnapKit
 
 enum KeyboardType: Int {
-    case pinyin = 0
-    case letter = 1
+    case pinyin = 0             // 九宫格拼音键盘
+    case letter = 1             // 字母键盘
 }
 
 class KeyboardViewController: UIInputViewController {
@@ -23,6 +23,7 @@ class KeyboardViewController: UIInputViewController {
         willSet {
             if keyboardType != newValue {
                 if newValue == .pinyin {
+                    // 九宫格拼音键盘
                     self.inputView?.addSubview(pinYinKeyboardView)
                     pinYinKeyboardView.delegate = self
                     pinYinKeyboardView.snp.remakeConstraints({ (make) -> Void in
@@ -31,6 +32,7 @@ class KeyboardViewController: UIInputViewController {
                     })
                     letterKeyboardView.removeFromSuperview()
                 } else if newValue == .letter {
+                    // 字母键盘
                     self.inputView?.addSubview(letterKeyboardView)
                     letterKeyboardView.delegate = self
                     letterKeyboardView.snp.remakeConstraints { (make) in

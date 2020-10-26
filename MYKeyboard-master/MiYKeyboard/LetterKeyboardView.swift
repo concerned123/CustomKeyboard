@@ -132,7 +132,7 @@ class LetterKeyboardView: UIView {
     // MARK: - 布局字母键盘
     func prepareLettersSubview() {
         // 添加事件
-        CHSwitchKeyView.addTarget(self, action: #selector(changeKeyboardTypeToPinYin), for: UIControl.Event.touchUpInside)
+        CHSwitchKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
         deleteKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
         spacekeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchDown)
         returnKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
@@ -471,11 +471,6 @@ class LetterKeyboardView: UIView {
     }
     
     // MARK: - 事件处理
-    // 切换键盘类型
-    @objc func changeKeyboardTypeToPinYin() {
-        delegate.keyboardType = .pinyin
-    }
-    
     // 处理字母输入
     @objc func tapLetterKey(_ sender: KeyView) {
         let proxy = (delegate.textDocumentProxy) as UITextDocumentProxy
@@ -497,6 +492,9 @@ class LetterKeyboardView: UIView {
         case .capital:
             // 键盘大小写
             perform(#selector(capitalSingleClick), with: nil, afterDelay: 0.2)
+        case .CHSwitch:
+            // 切换回九宫格键盘
+            delegate.keyboardType = .pinyin
         case .space:
             proxy.insertText(" ")
         case .return:
