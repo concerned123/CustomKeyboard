@@ -459,6 +459,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     }
     
     func updateTypingViews() {
+        
+        // 是否点击了空格或者选择了字
         if isClickSpaceOrWord {
             pinyinStore.currentIndex = 0
             pinyinStore.pinyinSelected = ""
@@ -468,11 +470,13 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         if !pinyinStore.isInHistory || pinyinStore.needSearchHistory {      //如果不在历史中或者需要继续查询历史
             pinyinStore.id = idString                                       //在历史中且不要查询历史就不会进if
         }
+        
         if idString == "" {
             isTyping = false
             saveIndex = true
             pinyinStore.clearData()
         }
+        
         if isTyping {
             if pinyinStore.pinyins.count == 0 {
                 let proxy = (delegate.textDocumentProxy) as UITextDocumentProxy
@@ -515,6 +519,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             switch key {
             case "2","3","4","5","6","7","8","9":
                 value.addTarget(self, action: #selector(tapNormalKey(_:)), for: .touchDown)
+            // touchUpInside类型
             case "en", "en2":
                 value.addTarget(self, action: #selector(changeKeyboardTypeToLetter), for: .touchUpInside)
             default:
@@ -529,11 +534,15 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     }
     
     @objc func tapNormalKey(_ sender: KeyView) {
+        // 正在输入
         isTyping = true
+        // 九宫格按键组合
         idString += sender.key.typeId!
         
+        // 是否点击了空格或者选择了字
         isClickSpaceOrWord = false
 
+        // true为没有选中拼音，false为已经选中拼音
         if saveIndex == false {
             pinyinStore.currentIndex = 0
             pinyinStore.pinyinSelected = ""
@@ -543,6 +552,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             saveIndex = true
         }
         
+        // 候选词滑动视图复位
         self.wordsQuickCollection?.setContentOffset(CGPoint.zero, animated: false)
         updateTypingViews()
     }

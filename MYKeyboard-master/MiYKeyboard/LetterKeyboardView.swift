@@ -11,7 +11,7 @@ import UIKit
 let capitalKey = "capitalKey"                               // 大写键
 let deleteKey = "deleteKey"                                 // 删除键
 let numberSwitchKey = "numberSwitchKey"                     // 切换到数字键
-let CHSwitchKey = "CHSwitchKey"                             // 切换到中文键
+let chSwitchKey = "chSwitchKey"                             // 切换到中文键
 let spacekey = "spacekey"                                   // 空格键
 let returnKey = "returnKey"                                 // 回车键
 
@@ -44,7 +44,7 @@ class LetterKeyboardView: UIView {
         ["q", "w", "e", "r", "t", "y", "u", "i", "o", "p"],
         ["a", "s", "d", "f", "g", "h", "j", "k", "l"],
         [capitalKey, "z", "x", "c", "v", "b", "n", "m", deleteKey],
-        [numberSwitchKey, CHSwitchKey, spacekey, returnKey]
+        [numberSwitchKey, chSwitchKey, spacekey, returnKey]
     ]
     
     let numbers = [
@@ -64,7 +64,7 @@ class LetterKeyboardView: UIView {
     let capitalKeyView = KeyView(withKey: Key(withTitle: "", andType: .capital, typeId: nil))
     let deleteKeyView = KeyView(withKey: Key(withTitle: "", andType: .backspace, typeId: nil))
     let numberSwitchKeyView = KeyView(withKey: Key(withTitle: "123", andType: .numberSwitch, typeId: nil))
-    let CHSwitchKeyView = KeyView(withKey: Key(withTitle: "中", andType: .CHSwitch, typeId: nil))
+    let chSwitchKeyView = KeyView(withKey: Key(withTitle: "中", andType: .chSwitch, typeId: nil))
     let spacekeyView = KeyView(withKey: Key(withTitle: "space", andType: .space, typeId: nil))
     let returnKeyView = KeyView(withKey: Key(withTitle: "发送", andType: .return, typeId: nil))
     
@@ -132,7 +132,7 @@ class LetterKeyboardView: UIView {
     // MARK: - 布局字母键盘
     func prepareLettersSubview() {
         // 添加事件
-        CHSwitchKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
+        chSwitchKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
         deleteKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
         spacekeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchDown)
         returnKeyView.addTarget(self, action: #selector(tapLetterKey(_:)), for: .touchUpInside)
@@ -141,7 +141,7 @@ class LetterKeyboardView: UIView {
         capitalKeyView.addTarget(self, action: #selector(capitalDoubleClick), for: .touchDownRepeat)
         
         // 给视图打上标签
-        let viewArray = [capitalKeyView, deleteKeyView, numberSwitchKeyView, CHSwitchKeyView, spacekeyView, returnKeyView]
+        let viewArray = [capitalKeyView, deleteKeyView, numberSwitchKeyView, chSwitchKeyView, spacekeyView, returnKeyView]
         for view in viewArray {
             view.tag = letterViewTag
         }
@@ -213,11 +213,11 @@ class LetterKeyboardView: UIView {
                     }
                     x += horizontalSpace + letterKeyHeight
                     continue
-                } else if key == CHSwitchKey {
+                } else if key == chSwitchKey {
                     // 切换到九宫格的按键
-                    addSubview(CHSwitchKeyView)
-                    CHSwitchKeyView.layer.cornerRadius = cornerRadius
-                    CHSwitchKeyView.snp.makeConstraints { (make) in
+                    addSubview(chSwitchKeyView)
+                    chSwitchKeyView.layer.cornerRadius = cornerRadius
+                    chSwitchKeyView.snp.makeConstraints { (make) in
                         make.left.equalTo(x)
                         make.top.equalTo(y)
                         make.size.equalTo(CGSize(width: letterKeyHeight, height: letterKeyHeight))
@@ -492,7 +492,7 @@ class LetterKeyboardView: UIView {
         case .capital:
             // 键盘大小写
             perform(#selector(capitalSingleClick), with: nil, afterDelay: 0.2)
-        case .CHSwitch:
+        case .chSwitch:
             // 切换回九宫格键盘
             delegate.keyboardType = .pinyin
         case .space:

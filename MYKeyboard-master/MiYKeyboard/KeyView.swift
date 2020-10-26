@@ -104,7 +104,7 @@ class KeyView: UIControl {
              .reType,
              // 新增类型
              .numberSwitch,
-             .CHSwitch,
+             .chSwitch,
              .numberToLetter,
              .symbolSwitch:
             backgroundColor = grayColor
