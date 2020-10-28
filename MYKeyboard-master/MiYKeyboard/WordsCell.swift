@@ -24,29 +24,15 @@ class WordsCell: UICollectionViewCell {
         wordslabel.textColor = UIColor.black
 
         self.contentView.addSubview(wordslabel)
-        
         self.contentView.snp.makeConstraints({ (make) -> Void in
-            make.top.left.equalToSuperview()
-            make.height.equalTo(bannerHeight*2/5)
+            make.top.left.bottom.equalToSuperview()
             make.right.equalTo(wordslabel)
         })
         
         wordslabel.snp.makeConstraints({ (make) -> Void in
-            make.left.top.bottom.equalToSuperview()
-            make.width.greaterThanOrEqualTo(46.875).priority(1000)
+            make.center.equalToSuperview()
         })
-
     }
-    
-    
-//    override func layoutSubviews() {
-//        
-//        super.layoutSubviews()
-//        
-//
-//
-//    }
-    
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

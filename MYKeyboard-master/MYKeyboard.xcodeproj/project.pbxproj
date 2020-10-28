@@ -12,6 +12,7 @@
 		2938FA20253EDB4F001052CC /* commonWords.txt in Resources */ = {isa = PBXBuildFile; fileRef = 2938FA1F253EDB4F001052CC /* commonWords.txt */; };
 		2938FA5825402ABA001052CC /* DataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2938FA5725402ABA001052CC /* DataManager.swift */; };
 		2938FA5E25402BC5001052CC /* CommonTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2938FA5D25402BC5001052CC /* CommonTable.swift */; };
+		29CB72EF254950A900CD93AD /* CacheTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29CB72EE254950A900CD93AD /* CacheTable.swift */; };
 		29ED09C525416EA200974454 /* Media.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 29ED09C425416EA200974454 /* Media.xcassets */; };
 		29ED09CB2541836C00974454 /* PinYinKeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ED09CA2541836C00974454 /* PinYinKeyboardView.swift */; };
 		29ED09DD2542AF9F00974454 /* GlobalExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29ED09DC2542AF9F00974454 /* GlobalExtension.swift */; };
@@ -63,7 +64,7 @@
 /* Begin PBXCopyFilesBuildPhase section */
 		6D38EC191E80027300A8E605 /* Embed App Extensions */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
@@ -81,6 +82,7 @@
 		2938FA5725402ABA001052CC /* DataManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataManager.swift; sourceTree = "<group>"; };
 		2938FA5D25402BC5001052CC /* CommonTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonTable.swift; sourceTree = "<group>"; };
 		2938FAAB254112F0001052CC /* Swift_Bridge_Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Swift_Bridge_Header.h; sourceTree = "<group>"; };
+		29CB72EE254950A900CD93AD /* CacheTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CacheTable.swift; sourceTree = "<group>"; };
 		29ED09C425416EA200974454 /* Media.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Media.xcassets; sourceTree = "<group>"; };
 		29ED09CA2541836C00974454 /* PinYinKeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinYinKeyboardView.swift; sourceTree = "<group>"; };
 		29ED09DC2542AF9F00974454 /* GlobalExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GlobalExtension.swift; sourceTree = "<group>"; };
@@ -175,6 +177,7 @@
 				6D40A3A81E9387FF007B8E2A /* PinyinDictionary.swift */,
 				2938FA5725402ABA001052CC /* DataManager.swift */,
 				2938FA5D25402BC5001052CC /* CommonTable.swift */,
+				29CB72EE254950A900CD93AD /* CacheTable.swift */,
 				29ED09DB2542AF6500974454 /* Extension */,
 				6D3F94261E825526000EE05C /* Controller */,
 				6D3F94251E825520000EE05C /* Model */,
@@ -381,12 +384,12 @@
 				TargetAttributes = {
 					6D38EC0D1E80027300A8E605 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 843XY6842K;
+						DevelopmentTeam = NB2KKX4544;
 						ProvisioningStyle = Automatic;
 					};
 					6D68FAE31E7EC14A003AA407 = {
 						CreatedOnToolsVersion = 8.2.1;
-						DevelopmentTeam = 843XY6842K;
+						DevelopmentTeam = NB2KKX4544;
 						ProvisioningStyle = Automatic;
 					};
 					6D68FAFA1E7EC14A003AA407 = {
@@ -538,6 +541,7 @@
 				6D38EC111E80027300A8E605 /* KeyboardViewController.swift in Sources */,
 				6D3F942A1E8257E0000EE05C /* KeyboardModel.swift in Sources */,
 				6D40A3A91E9387FF007B8E2A /* PinyinDictionary.swift in Sources */,
+				29CB72EF254950A900CD93AD /* CacheTable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -610,10 +614,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 7342A40FB580DAE51132B86E /* Pods-MiYKeyboard.debug.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 843XY6842K;
+				DEVELOPMENT_TEAM = NB2KKX4544;
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard.MiYKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboardxy.keyboardKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/MYKeyboard/Swift_Bridge_Header.h";
@@ -625,10 +629,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3D874EEC497A95C54849D2D1 /* Pods-MiYKeyboard.release.xcconfig */;
 			buildSettings = {
-				DEVELOPMENT_TEAM = 843XY6842K;
+				DEVELOPMENT_TEAM = NB2KKX4544;
 				INFOPLIST_FILE = MiYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @executable_path/../../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard.MiYKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboardxy.keyboardKit;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "${SRCROOT}/MYKeyboard/Swift_Bridge_Header.h";
@@ -735,10 +739,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 843XY6842K;
+				DEVELOPMENT_TEAM = NB2KKX4544;
 				INFOPLIST_FILE = MYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboardxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -750,10 +754,10 @@
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				DEVELOPMENT_TEAM = 843XY6842K;
+				DEVELOPMENT_TEAM = NB2KKX4544;
 				INFOPLIST_FILE = MYKeyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboard;
+				PRODUCT_BUNDLE_IDENTIFIER = mingyutjm.MYKeyboardxy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};

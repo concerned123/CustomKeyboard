@@ -17,24 +17,28 @@ struct DataBaseName {
 /// 数据库表名
 struct TableName {
     static let common = "common_table"
+    static let cache = "cache_table"
 }
 
 
 class DBManager: NSObject {
     /// 数据库路径
-    private static var dbPath: String = {
+    static var dbPath: String = {
         // 获取工程内容数据库名字
-        return Bundle.main.path(forResource: "commonWords", ofType: "db")!
+        //Bundle.main.path(forResource: "commonWords", ofType: "db")!
+        let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
+        let documentsDirectory = paths.object(at: 0) as! NSString
+        return documentsDirectory.appendingPathComponent(DataBaseName.dbName)
     }()
     
     /// 数据库 用于多线程事务处理
     static var dbQueue: FMDatabase = {
-        print(DBManager.dbPath)
         let db = FMDatabase(path: DBManager.dbPath)
+        debugPrint("数据库位置 = \(DBManager.dbPath)")
         if db.open() {
-            print("数据打开成功")
+            debugPrint("数据打开成功")
         } else {
-            print("数据打开失败")
+            debugPrint("数据打开失败")
         }
         return db
     }()

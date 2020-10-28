@@ -16,6 +16,8 @@ let historyPath: String = { () -> String in
     let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
     let documentsDirectory = paths.object(at: 0) as! NSString
     let path = documentsDirectory.appendingPathComponent("TypingHistory.plist")
+    
+    debugPrint("历史记录保存位置 \(path)")
     return path
 }()
 
@@ -25,7 +27,7 @@ var historyDictionary: NSMutableDictionary? {
     }
 }
 
-class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewDataSource {
+class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var bannerView: UIView = UIView()                           // 顶部候选词视图
     var bottomView: UIView = UIView()                           // bannerView下面的键盘视图
@@ -359,13 +361,14 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             make.height.equalToSuperview().multipliedBy(0.4)
         })
 
-        let layout = UICollectionViewFlowLayout.init()
+        let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 10
         layout.minimumInteritemSpacing = 10
-        layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight*2/5)
+        layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight * 2.0 / 5.0)
         wordsQuickCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        wordsQuickCollection.showsHorizontalScrollIndicator = false
         wordsQuickCollection.backgroundColor = UIColor.clear
         wordsQuickCollection.delaysContentTouches = false
         wordsQuickCollection.canCancelContentTouches = true
@@ -388,12 +391,14 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView === self.wordsQuickCollection {
-            if isTyping {
+            // 候选词视图如果在输入中，则显示候选词
+//            if isTyping {
                 return pinyinStore.words.count
-            } else {
-                return 0
-            }
+//            } else {
+//                return 0
+//            }
         } else {
+            // 左侧：如果在输入中，则显示拼音；否则显示符号
             if isTyping {
                 return pinyinStore.pinyins.count
             } else {
@@ -402,13 +407,23 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         }
     }
     
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        if collectionView == self.wordsQuickCollection {
+            let pinyin = pinyinStore.words[indexPath.row] as NSString
+            let size = pinyin.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: bannerHeight * 2.0 / 5.0), options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .title3)], context: nil).size
+            return CGSize(width: size.width + 6, height: size.height)
+        } else {
+            return CGSize(width: 75, height: 40.5)
+        }
+    }
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         
         if collectionView === self.wordsQuickCollection {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "WordsCell", for: indexPath) as! WordsCell
-            if isTyping {
+//            if isTyping {
                 cell.wordslabel.text = pinyinStore.words[indexPath.row]
-            }
+//            }
             return cell
 
         } else {
@@ -428,12 +443,22 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         
         if collectionView === self.wordsQuickCollection {
+            // 联想词点击
+            if pinyinStore.words.count > 0 && idString == "" {
+                let word = pinyinStore.words[indexPath.row]
+                let proxy = (delegate.textDocumentProxy) as UITextDocumentProxy
+                proxy.insertText(word)
+            }
             
+            // 选择了字
             isClickSpaceOrWord = true
 
 //            proxy.insertText(pinyinStore.words[indexPath.row])
+            // 将当前选中的字保存
             let word = pinyinStore.words[indexPath.row]
             pinyinStore.wordSelected.append(word)
+            
+            // 如果点击的内容为历史记录，则直接将内容放到文本框中，不再进行下一个文字选择
             if pinyinStore.isInHistory && indexPath.row < pinyinStore.historyCount {
                 pinyinStore.allPinyins.append(pinyinStore.splitedPinyinString)
                 pinyinStore.pinyins.removeAll()         //就是清除数据
@@ -441,6 +466,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             } else {
                 pinyinStore.isInHistory = false
                 pinyinStore.needSearchHistory = false
+                // 根据当前选中的下标，从对应的拼音中找到汉字words
                 pinyinStore.currentIndex = selectedIndex
                 let length = pinyinStore.pinyinSelected.count
                 var index = pinyinStore.indexStore.last!
@@ -486,16 +512,22 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
                 }
                 proxy.insertText(text)
                 let pinyin = PinyinStore.splitPinyinStrings(pinyinStore.allPinyins)
-                saveToHistory(withId: pinyinStore.id, pinyin: pinyin, word: text)
+                CacheTable.cache(key: pinyinStore.id, pinyin: pinyin, word: text)
                 isTyping = false
                 saveIndex = true
                 pinyinStore.clearData()
                 idString = ""
+                
+                // 根据当前输入词语，查找联想词
+                if text.count > 0 , let associationWords = CommonTable.queryAssociateWords(text: text) {
+                    pinyinStore.words = associationWords
+                }
             }
         }
         
         
         if isTyping {
+            // 拼音显示
             self.pinyinLabel.text = pinyinStore.splitedPinyinString
         } else {
             self.pinyinLabel.text = ""
@@ -533,6 +565,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         delegate.keyboardType = .letter
     }
     
+    // 点击九宫格拼音按键
     @objc func tapNormalKey(_ sender: KeyView) {
         // 正在输入
         isTyping = true
@@ -557,6 +590,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         updateTypingViews()
     }
     
+    // 九宫格按键以外的按键
     @objc func tapOtherKey(_ sender: KeyView) {
         let proxy = (delegate.textDocumentProxy) as UITextDocumentProxy
 
@@ -643,6 +677,10 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
                 }
             } else {
                 proxy.deleteBackward()
+                // 如果没有输入拼音，则将候选词清空
+                if idString.count == 0 {
+                    reset()
+                }
             }
 
         case .return:
@@ -656,10 +694,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             
         case .reType:
             if isTyping {
-                idString = ""
-                saveIndex = true
-                pinyinStore.clearData()
-                updateTypingViews()
+                reset()
             }
         case .changeToNumber:
             numberView.isHidden = false
@@ -673,61 +708,67 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         }
     }
     
+    // 重置输入法
+    @objc func reset() {
+        idString = ""
+        saveIndex = true
+        pinyinStore.clearData()
+        updateTypingViews()
+    }
 }
 
 // MARK: 添加到History     结构为   0 pinyin    1 word  2 frequence
-func saveToHistory(withId key: String, pinyin: String, word: String) {
-    
-    if let dict = historyDictionary {
-        let value = dict.value(forKey: key) as? Array<[String]>
-        if value != nil {
-            var pinyins = value![0]
-            var words = value![1]
-            var frequence = value![2]
-            var oldIndex: Int = 0
-            var index = 0
-            var fre = 0
-            var flag = false
-            for (i, str) in words.enumerated() {
-                if str == word {
-                    oldIndex = i
-                    fre = Int(frequence[i])!
-                    fre += 1
-                    flag = true
-                    break
-                }
-            }
-            for (i, str) in frequence.enumerated() {
-                let num = Int(str)!
-                if num < fre {
-                    index = i
-                    break
-                }
-            }
-            
-            if flag {       //有这个值
-                words.remove(at: oldIndex)
-                pinyins.remove(at: oldIndex)
-                frequence.remove(at: oldIndex)
-                
-                words.insert(word, at: index)
-                pinyins.insert(pinyin, at: index)
-                frequence.insert("\(fre)", at: index)
-            } else {
-                words.append(word)
-                pinyins.append(pinyin)
-                frequence.append("1")
-            }
-            dict.setObject([pinyins, words, frequence], forKey: key as NSCopying)
-            dict.write(toFile: historyPath, atomically: true)
-            
-        } else {
-            dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
-            dict.write(toFile: historyPath, atomically: true)
-        }
-    } else {
-        let dict = NSMutableDictionary()
-        dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
-        dict.write(toFile: historyPath, atomically: true)
-    }
-}
+//func saveToHistory(withId key: String, pinyin: String, word: String) {
+//    if let dict = historyDictionary {
+//        let value = dict.value(forKey: key) as? Array<[String]>
+//        if value != nil {
+//            var pinyins = value![0]
+//            var words = value![1]
+//            var frequence = value![2]
+//            var oldIndex: Int = 0
+//            var index = 0
+//            var fre = 0
+//            var flag = false
+//            for (i, str) in words.enumerated() {
+//                if str == word {
+//                    oldIndex = i
+//                    fre = Int(frequence[i])!
+//                    fre += 1
+//                    flag = true
+//                    break
+//                }
+//            }
+//            for (i, str) in frequence.enumerated() {
+//                let num = Int(str)!
+//                if num < fre {
+//                    index = i
+//                    break
+//                }
+//            }
+//
+//            if flag {       //有这个值
+//                words.remove(at: oldIndex)
+//                pinyins.remove(at: oldIndex)
+//                frequence.remove(at: oldIndex)
+//
+//                words.insert(word, at: index)
+//                pinyins.insert(pinyin, at: index)
+//                frequence.insert("\(fre)", at: index)
+//            } else {
+//                words.append(word)
+//                pinyins.append(pinyin)
+//                frequence.append("1")
+//            }
+//            dict.setObject([pinyins, words, frequence], forKey: key as NSCopying)
+//            dict.write(toFile: historyPath, atomically: true)
+//
+//        } else {
+//            dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+//            dict.write(toFile: historyPath, atomically: true)
+//        }
+//    } else {
+//        let dict = NSMutableDictionary()
+//        dict.setObject([[pinyin], [word], ["1"]], forKey: key as NSCopying)
+//        dict.write(toFile: historyPath, atomically: true)
+//    }
+//}

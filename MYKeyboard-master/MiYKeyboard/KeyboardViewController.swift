@@ -39,6 +39,7 @@ class KeyboardViewController: UIInputViewController {
                         make.left.right.bottom.top.equalToSuperview()
                         make.height.equalTo(letterKeyboardHeight).priority(999)
                     }
+                    pinYinKeyboardView.reset()
                     pinYinKeyboardView.removeFromSuperview()
                 }
             }
@@ -55,6 +56,9 @@ class KeyboardViewController: UIInputViewController {
         super.viewDidLoad()
         // 默认初始化为拼音输入法
         keyboardType = .pinyin
+        
+        // 启动
+        CommonTable.start()
     }
     
     override func didReceiveMemoryWarning() {
