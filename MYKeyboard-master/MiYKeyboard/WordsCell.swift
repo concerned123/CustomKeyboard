@@ -8,6 +8,8 @@
 
 import UIKit
 
+let optionColor = UIColor(red: 64.0/255.0, green: 64.0/255.0, blue: 64.0/255.0, alpha: 1)
+
 class WordsCell: UICollectionViewCell {
     
     var wordslabel = UILabel()
@@ -21,7 +23,7 @@ class WordsCell: UICollectionViewCell {
         wordslabel.textAlignment = .center
         wordslabel.sizeToFit()
         wordslabel.font = UIFont.preferredFont(forTextStyle: .title3)
-        wordslabel.textColor = UIColor.black
+        wordslabel.textColor = optionColor
 
         self.contentView.addSubview(wordslabel)
         self.contentView.snp.makeConstraints({ (make) -> Void in

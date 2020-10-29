@@ -360,11 +360,13 @@ class PinyinStore {
                     firstStrings = leftStrings
                     strings = rightStrings
                 }
+                
+                debugPrint("查询组合 \(combination)")
             }
         }
         
-        print("possibleArray = \(possibleArray)")
-        print("firstStrings = \(firstStrings), strings = \(strings)")
+        debugPrint("possibleArray = \(possibleArray)")
+//        debugPrint("firstStrings = \(firstStrings), strings = \(strings)")
         return (firstStrings, strings, closerAnwsers)
     }    
 }

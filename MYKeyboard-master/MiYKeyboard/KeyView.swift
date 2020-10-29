@@ -8,7 +8,7 @@
 
 import UIKit
 
-let grayColor = UIColor.init(red: 169/255.0, green: 173/255.0, blue: 184/255.0, alpha: 1)
+let grayColor = UIColor(red: 184.0/255.0, green: 188.0/255.0, blue: 196.0/255.0, alpha: 1)
 let blueColor = UIColor.init(red: 10/255.0, green: 96/255.0, blue: 254/255.0, alpha: 1)
 
 class KeyView: UIControl {
@@ -27,6 +27,11 @@ class KeyView: UIControl {
         titleLabel.sizeToFit()
         titleLabel.textAlignment = .center
         self.addSubview(titleLabel)
+        
+        // 设置按钮文字颜色
+        if key.type == .reType {
+            titleLabel.textColor = optionColor
+        }
     }
     
     
@@ -81,6 +86,11 @@ class KeyView: UIControl {
             if self.key.type == .return {
                 self.titleLabel.textColor = UIColor.black
             }
+        }
+        
+        if key.type == .normal {
+            // 九宫格按键，按下时变灰
+            backgroundColor = grayColor
         }
     }
     

@@ -8,9 +8,12 @@
 
 import UIKit
 
-let bannerHeight = 55 as CGFloat
+let bannerHeight = 60 as CGFloat
+let bannerLineColor = UIColor(red: 226.0/255.0, green: 226.0/255.0, blue: 226.0/255.0, alpha: 1)
 let lineColor = UIColor.lightGray
 let lineThickness = 0.5
+
+let leftSymbolWidth: CGFloat = 65
 
 let historyPath: String = { () -> String in
     let paths = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true) as NSArray
@@ -36,6 +39,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     var wordsQuickCollection: UICollectionView!                 // 候选词滑动视图
     var symbolCollection: UICollectionView!                     // 左侧拼音选项视图
     var numberView = UIView()                                   // 数字键盘
+    let closeButton = UIButton()
     
     weak var delegate: KeyboardViewController!
     var keysDictionary = [String: KeyView]()
@@ -83,7 +87,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         layout.scrollDirection = .vertical
         layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
         layout.minimumLineSpacing = 0
-        layout.itemSize = CGSize(width: 75, height: 40.5)
+        layout.itemSize = CGSize(width: leftSymbolWidth, height: 40.5)
         
         symbolCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         symbolCollection.delaysContentTouches = false
@@ -96,7 +100,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         bottomView.addSubview(symbolCollection)
         symbolCollection.snp.makeConstraints({ (make) -> Void in
             make.top.left.equalToSuperview()
-            make.width.equalToSuperview().dividedBy(5)
+//            make.width.equalToSuperview().dividedBy(5)
+            make.width.equalTo(leftSymbolWidth)
             make.height.equalToSuperview().multipliedBy(0.75)
         })
         
@@ -228,9 +233,9 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         
         //加线
         let lineBanner0 = UIView()
-        lineBanner0.backgroundColor = lineColor
+        lineBanner0.backgroundColor = bannerLineColor
         let lineBanner1 = UIView()
-        lineBanner1.backgroundColor = lineColor
+        lineBanner1.backgroundColor = bannerLineColor
         bannerView.addSubview(lineBanner0)
         bannerView.addSubview(lineBanner1)
         lineBanner0.snp.makeConstraints({ (make) -> Void in
@@ -353,6 +358,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
     
     // 布局候选词视图
     func addViewsToBanner() {
+        // 拼音显示label
+        pinyinLabel.textColor = optionColor
         bannerView.addSubview(pinyinLabel)
         pinyinLabel.snp.makeConstraints({ (make) -> Void in
             make.left.equalTo(10)
@@ -363,8 +370,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
 
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 10
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
+        layout.minimumLineSpacing = 20
         layout.minimumInteritemSpacing = 10
         layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight * 2.0 / 5.0)
         wordsQuickCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
@@ -382,6 +389,31 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             make.left.right.equalTo(pinyinLabel)
             make.bottom.equalToSuperview()
         })
+        
+        // 键盘收起按键
+        closeButton.backgroundColor = UIColor.white
+        closeButton.addTarget(self, action: #selector(close), for: .touchUpInside)
+        bannerView.addSubview(closeButton)
+        closeButton.snp.makeConstraints { (make) in
+            make.right.bottom.equalToSuperview()
+            make.height.equalTo(wordsQuickCollection.snp.height).offset(-lineThickness)
+            make.width.equalTo(symbolCollection)
+        }
+        
+        // 添加左阴影
+        closeButton.layer.shadowColor = UIColor.lightGray.cgColor
+        closeButton.layer.shadowOffset = CGSize(width: -5, height: 0)
+        closeButton.layer.shadowOpacity = 0.1
+        
+        let closeIcon = UIImageView()
+        closeIcon.image = UIImage(named: "keyboard_close")
+        closeButton.addSubview(closeIcon)
+        closeIcon.snp.makeConstraints { (make) in
+            make.width.equalTo(20)
+            make.height.equalTo(12)
+            make.center.equalToSuperview()
+        }
+        
     }
     
     // MARK: - UICollectionView delegate
@@ -413,7 +445,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             let size = pinyin.boundingRect(with: CGSize(width: CGFloat.greatestFiniteMagnitude, height: bannerHeight * 2.0 / 5.0), options: .usesLineFragmentOrigin, attributes: [NSAttributedString.Key.font: UIFont.preferredFont(forTextStyle: .title3)], context: nil).size
             return CGSize(width: size.width + 6, height: size.height)
         } else {
-            return CGSize(width: 75, height: 40.5)
+            return CGSize(width: leftSymbolWidth, height: 40.5)
         }
     }
     
@@ -425,7 +457,6 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
                 cell.wordslabel.text = pinyinStore.words[indexPath.row]
 //            }
             return cell
-
         } else {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "SymbolCell", for: indexPath) as! SymbolCell
             
@@ -434,8 +465,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             } else {
                 cell.addKey(symbolStore.allSymbols[indexPath.row])
             }
+            
             cell.keyView?.addTarget(self, action: #selector(tapOtherKey(_:)), for: .touchUpInside)
-
             return cell
         }
     }
@@ -537,8 +568,8 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
 
         
         UIView.performWithoutAnimation {
-            self.symbolCollection?.reloadData()
-            self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            self.symbolCollection.reloadData()
+            self.wordsQuickCollection.reloadSections(NSIndexSet(index: 0) as IndexSet)
             //            self.wordsQuickCollection?.layoutIfNeeded()
             //            self.wordsQuickCollection?.reloadData()
         }
@@ -586,7 +617,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         }
         
         // 候选词滑动视图复位
-        self.wordsQuickCollection?.setContentOffset(CGPoint.zero, animated: false)
+        self.wordsQuickCollection.setContentOffset(CGPoint.zero, animated: false)
         updateTypingViews()
     }
     
@@ -701,7 +732,15 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         case .changeToNormal:
             numberView.isHidden = true
 //            allSymbolCollection?.isHidden = true
-//        case .changeToSymbol:
+        case .changeToSymbol:
+            // 点击符号：清除输入，并把符号显示到候选区
+            reset()
+            pinyinStore.words = SymbolKeyStore.defaultKeys
+            UIView.performWithoutAnimation {
+                self.symbolCollection.reloadData()
+                self.wordsQuickCollection.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            }
+            
 //            allSymbolCollection?.isHidden = false
         default:
             break
@@ -714,6 +753,11 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         saveIndex = true
         pinyinStore.clearData()
         updateTypingViews()
+    }
+    
+    // 收起键盘
+    @objc func close() {
+        delegate.dismissKeyboard()
     }
 }
 

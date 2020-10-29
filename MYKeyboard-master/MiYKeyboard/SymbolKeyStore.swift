@@ -12,10 +12,10 @@ class SymbolKeyStore {
     
     var allSymbols: [Key] = []
     
+    static let defaultKeys = ["，", "。", "？", "！", "...", "~", "'", "、"]
+    
     init() {
-        let defaultKeys = ["，", "。", "？", "！", "...", "~", "'", "、"]
-
-        for symbol in defaultKeys {
+        for symbol in SymbolKeyStore.defaultKeys {
             let key = Key(withTitle: symbol, andType: .symbol)
             allSymbols.append(key)
         }
