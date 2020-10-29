@@ -178,6 +178,8 @@ class PinyinStore {
             return nil
         }
         
+//        debugPrint("results = \(results)")
+        
         // 结果数组
         var possibleArray = [String]()
         
@@ -234,6 +236,8 @@ class PinyinStore {
                 }
             }
         }
+        
+//        debugPrint("possibleArray = \(possibleArray)")
         
         return possibleArray
     }
@@ -312,7 +316,7 @@ class PinyinStore {
         var leftStrings = firstStrings
         var rightStrings = strings
         var closerAnwsers: [CommonTable]?
-        if pinyinSelected.count == 0 && wordSelected.count == 0 && typeId.count <= 7 {
+        if pinyinSelected.count == 0 && wordSelected.count == 0 && typeId.count <= 10 {
             //将词语简写组合
             if possibleArray.count > 0, let combination = pinYinAlgorithm(results: possibleArray) {
                 // 将结果插入最前面
@@ -374,9 +378,11 @@ class PinyinStore {
                                 //拼音
                                 if let pinyins = table.pinyin?.split(separator: "'"), pinyins.count > i {
                                     let pinyin = pinyins[i]
-                                    let startIndex = pinyin.index(pinyin.startIndex, offsetBy: 0)
-                                    let endIndex = pinyin.index(pinyin.startIndex, offsetBy: item.count)
-                                    rightStrings[i] = String(pinyin[startIndex..<endIndex])
+                                    if pinyin.count >= item.count {
+                                        let startIndex = pinyin.index(pinyin.startIndex, offsetBy: 0)
+                                        let endIndex = pinyin.index(pinyin.startIndex, offsetBy: item.count)
+                                        rightStrings[i] = String(pinyin[startIndex..<endIndex])
+                                    }
                                 }
                             }
                         }

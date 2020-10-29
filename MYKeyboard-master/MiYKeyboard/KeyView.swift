@@ -96,12 +96,18 @@ class KeyView: UIControl {
     
     override func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesEnded(touches, with: event)
-        updateBackgroundColorWithType(key.type)
+        // 延迟增加点击触感
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            self.updateBackgroundColorWithType(self.key.type)
+        }
     }
     
     override func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         super.touchesCancelled(touches, with: event)
-        updateBackgroundColorWithType(key.type)
+        // 延迟增加点击触感
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+            self.updateBackgroundColorWithType(self.key.type)
+        }
     }
 
     /// 设置按键颜色
