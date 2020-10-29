@@ -410,7 +410,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         bannerView.addSubview(wordsQuickCollection)
         wordsQuickCollection.snp.makeConstraints({ (make) -> Void in
             make.top.equalTo(pinyinLabel.snp.bottom)
-            make.left.equalTo(pinyinLabel)
+            make.left.equalToSuperview()
             make.right.equalTo(closeButton.snp.left)
             make.bottom.equalToSuperview()
         })
@@ -586,6 +586,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         UIView.performWithoutAnimation {
             self.symbolCollection.reloadData()
             self.wordsQuickCollection.reloadSections(NSIndexSet(index: 0) as IndexSet)
+            self.wordsQuickCollection.contentOffset = CGPoint.zero
             //            self.wordsQuickCollection?.layoutIfNeeded()
             //            self.wordsQuickCollection?.reloadData()
         }
@@ -664,6 +665,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             
             UIView.performWithoutAnimation {
                 self.wordsQuickCollection?.reloadSections(NSIndexSet(index: 0) as IndexSet)
+                self.wordsQuickCollection.contentOffset = CGPoint.zero
             }
             self.pinyinLabel.text = pinyinStore.splitedPinyinString
 
@@ -755,6 +757,7 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             UIView.performWithoutAnimation {
                 self.symbolCollection.reloadData()
                 self.wordsQuickCollection.reloadSections(NSIndexSet(index: 0) as IndexSet)
+                self.wordsQuickCollection.contentOffset = CGPoint.zero
             }
             
 //            allSymbolCollection?.isHidden = false
