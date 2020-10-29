@@ -165,52 +165,77 @@ class PinyinStore {
     }
     
     /*
-     拼音组合
+     输入拼音组合
      [m, n, o],
      [x, y],
      [t]
      结果：["mxt", "myt", "nxt", "nyt", "oxt", "oyt"]
+     
+     优化组合算法，不再采用递归
      */
-    func pinYinCombination(results: [[String]]) -> [String]? {
-        if results.count >= 2 {
-            // 先取出第一个数组
-            let firstArray = results.first!
-            let len1 = firstArray.count
-            // 再取出第二个数组
-            let secondArray = results[1]
-            let len2 = secondArray.count
-            // 定义一个新数组
-            var newArray = Array(repeating: "", count: len1 * len2)
-            var index = 0
-            
-            for i in 0..<len1 {
-                for j in 0..<len2 {
-                    let newStr = firstArray[i] + "%" + secondArray[j]
-                    if !newArray.contains(newStr) {
-                        newArray[index] = newStr
-                    }
-                    index += 1
-                }
-            }
-            
-            // 过滤空元素
-            newArray = newArray.compactMap { (str) -> String? in
-                if str.count > 0 {
-                    return str
-                }
-                return nil
-            }
-            
-            // 使用递归
-            var remainingArray = [[String]]()
-            remainingArray.append(newArray)
-            for m in 2..<results.count {
-                remainingArray.append(results[m])
-            }
-            return pinYinCombination(results: remainingArray)
-        } else {
-            return results.first
+    func pinYinAlgorithm(results: [[String]]) -> [String]? {
+        if results.count == 0 {
+            return nil
         }
+        
+        // 结果数组
+        var possibleArray = [String]()
+        
+        /*
+            优化1：输入相同数组，则取同一组结果
+            [g, h, i]
+            [g, h, i]
+            [g, h, i]
+            结果：["ggg", "hhh", "iii"]
+         */
+        if results.count > 1 {
+            var isRepeatArr = true
+            let firstArr = results[0]
+            for index in 1..<results.count {
+                if firstArr != results[index] {
+                    isRepeatArr = false
+                    break
+                }
+            }
+            
+            if isRepeatArr {
+                for item in firstArr {
+                    var content = ""
+                    for _ in 0..<results.count {
+                        if content.count > 0 {
+                            content += "%" + item
+                        } else {
+                            content += item
+                        }
+                    }
+                    possibleArray.append(content)
+                }
+                
+                return possibleArray
+            }
+        }
+        
+        
+        // 第一次先添加一个空字符串
+        possibleArray.append("")
+        for i in 0..<results.count {
+            // 取出当前数组
+            let array = results[i]
+            let size = possibleArray.count
+            for _ in 0..<size {
+                // 每次都从队列中拿出第一个元素
+                let firstItem = possibleArray.removeFirst()
+                
+                // 然后跟"def"这样的字符串拼接，并再次放到队列中
+                for k in 0..<array.count {
+                    let before = firstItem
+                    let after = array[k]
+                    possibleArray.append(before + "%" + after)
+                }
+            }
+        }
+        
+        return possibleArray
     }
     
     // 把拼音词组分割为字符串显示
@@ -289,7 +314,7 @@ class PinyinStore {
         var closerAnwsers: [CommonTable]?
         if pinyinSelected.count == 0 && wordSelected.count == 0 && typeId.count <= 7 {
             //将词语简写组合
-            if possibleArray.count > 0, let combination = pinYinCombination(results: possibleArray) {
+            if possibleArray.count > 0, let combination = pinYinAlgorithm(results: possibleArray) {
                 // 将结果插入最前面
                 if let tables = CommonTable.queryPinYin(pinyins: combination), tables.count > 0 {
                     closerAnwsers = tables
@@ -360,12 +385,10 @@ class PinyinStore {
                     firstStrings = leftStrings
                     strings = rightStrings
                 }
-                
-                debugPrint("查询组合 \(combination)")
             }
         }
         
-        debugPrint("possibleArray = \(possibleArray)")
+//        debugPrint("possibleArray = \(possibleArray)")
 //        debugPrint("firstStrings = \(firstStrings), strings = \(strings)")
         return (firstStrings, strings, closerAnwsers)
     }    

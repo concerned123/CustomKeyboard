@@ -26,10 +26,10 @@ class WordsCell: UICollectionViewCell {
         wordslabel.textColor = optionColor
 
         self.contentView.addSubview(wordslabel)
-        self.contentView.snp.makeConstraints({ (make) -> Void in
-            make.top.left.bottom.equalToSuperview()
-            make.right.equalTo(wordslabel)
-        })
+//        self.contentView.snp.makeConstraints({ (make) -> Void in
+//            make.top.left.bottom.equalToSuperview()
+//            make.right.equalTo(wordslabel)
+//        })
         
         wordslabel.snp.makeConstraints({ (make) -> Void in
             make.center.equalToSuperview()

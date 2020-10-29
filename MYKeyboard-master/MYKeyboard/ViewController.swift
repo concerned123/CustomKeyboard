@@ -28,62 +28,36 @@ class ViewController: UIViewController/*, UICollectionViewDelegate, UICollection
             make.height.equalTo(200)
         })
         
-        
-        
-        
-        
-/*        let layout = UICollectionViewFlowLayout.init()
-        layout.scrollDirection = .vertical
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 5
-//        layout.itemSize = CGSize(width: 50, height: 30)
-        collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = UIColor.red
-        collectionView.delegate = self
-        collectionView.dataSource = self
-        
-        collectionView.clipsToBounds = false
-        
-        self.view.addSubview(collectionView)
-        collectionView.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(50)
-            make.bottom.equalTo(-50)
-            make.left.equalTo(100)
-            make.width.equalTo(30)
-        })
-
-        collectionView.register(MyConllectionViewCell.self, forCellWithReuseIdentifier: "Cell")
-*/
-//        
-
+//        print(pinYinAlgorithm(results: [["m", "n", "o"], ["x", "y"], ["t"]]))
     }
 
-    /*
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
     
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+    func pinYinAlgorithm(results: [[String]]) -> [String]? {
+        if results.count == 0 {
+            return nil
+        }
         
-        return 20
+        // 结果数组，第一次先添加一个空字符串
+        var possibleArray = [String]()
+        possibleArray.append("")
+        
+        for i in 0..<results.count {
+            // 取出当前数组
+            let array = results[i]
+            let size = possibleArray.count
+            for _ in 0..<size {
+                // 每次都从队列中拿出第一个元素
+                let firstItem = possibleArray.removeFirst()
+                
+                // 然后跟"def"这样的字符串拼接，并再次放到队列中
+                for k in 0..<array.count {
+                    possibleArray.append(firstItem + array[k])
+                }
+            }
+        }
+        
+        return possibleArray
     }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! MyConllectionViewCell
-        
-        return cell
-        
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        
-        let width = collectionView.bounds.width
-        let height = collectionView.bounds.height
-        let size = CGSize(width: width, height: height/5)
-        return size
-    }
-*/
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

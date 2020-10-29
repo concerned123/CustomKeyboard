@@ -367,28 +367,6 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             make.top.equalToSuperview()
             make.height.equalToSuperview().multipliedBy(0.4)
         })
-
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection = .horizontal
-        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 0)
-        layout.minimumLineSpacing = 20
-        layout.minimumInteritemSpacing = 10
-        layout.estimatedItemSize = CGSize(width: 46.875, height: bannerHeight * 2.0 / 5.0)
-        wordsQuickCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
-        wordsQuickCollection.showsHorizontalScrollIndicator = false
-        wordsQuickCollection.backgroundColor = UIColor.clear
-        wordsQuickCollection.delaysContentTouches = false
-        wordsQuickCollection.canCancelContentTouches = true
-        wordsQuickCollection.delegate = self
-        wordsQuickCollection.dataSource = self
-        wordsQuickCollection.register(WordsCell.self, forCellWithReuseIdentifier: "WordsCell")
-        
-        bannerView.addSubview(wordsQuickCollection)
-        wordsQuickCollection.snp.makeConstraints({ (make) -> Void in
-            make.top.equalTo(pinyinLabel.snp.bottom)
-            make.left.right.equalTo(pinyinLabel)
-            make.bottom.equalToSuperview()
-        })
         
         // 键盘收起按键
         closeButton.backgroundColor = UIColor.white
@@ -396,15 +374,15 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
         bannerView.addSubview(closeButton)
         closeButton.snp.makeConstraints { (make) in
             make.right.bottom.equalToSuperview()
-            make.height.equalTo(wordsQuickCollection.snp.height).offset(-lineThickness)
+            make.top.equalTo(pinyinLabel.snp.bottom).offset(lineThickness)
             make.width.equalTo(symbolCollection)
         }
-        
+
         // 添加左阴影
         closeButton.layer.shadowColor = UIColor.lightGray.cgColor
         closeButton.layer.shadowOffset = CGSize(width: -5, height: 0)
         closeButton.layer.shadowOpacity = 0.1
-        
+
         let closeIcon = UIImageView()
         closeIcon.image = UIImage(named: "keyboard_close")
         closeButton.addSubview(closeIcon)
@@ -413,7 +391,29 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
             make.height.equalTo(12)
             make.center.equalToSuperview()
         }
+
+        let layout = UICollectionViewFlowLayout()
+        layout.scrollDirection = .horizontal
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10)
+        layout.minimumLineSpacing = 20
+        layout.minimumInteritemSpacing = 10
+        wordsQuickCollection = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
+        wordsQuickCollection.showsHorizontalScrollIndicator = false
+        wordsQuickCollection.backgroundColor = UIColor.clear
+        wordsQuickCollection.delaysContentTouches = false
+        wordsQuickCollection.canCancelContentTouches = true
+        wordsQuickCollection.alwaysBounceHorizontal = true
+        wordsQuickCollection.delegate = self
+        wordsQuickCollection.dataSource = self
+        wordsQuickCollection.register(WordsCell.self, forCellWithReuseIdentifier: "WordsCell")
         
+        bannerView.addSubview(wordsQuickCollection)
+        wordsQuickCollection.snp.makeConstraints({ (make) -> Void in
+            make.top.equalTo(pinyinLabel.snp.bottom)
+            make.left.equalTo(pinyinLabel)
+            make.right.equalTo(closeButton.snp.left)
+            make.bottom.equalToSuperview()
+        })
     }
     
     // MARK: - UICollectionView delegate
@@ -437,6 +437,22 @@ class PinYinKeyboardView: UIView, UICollectionViewDelegate, UICollectionViewData
                 return symbolStore.allSymbols.count
             }
         }
+    }
+    
+    // 上下间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        if collectionView == self.wordsQuickCollection {
+            return 20
+        }
+        return 0
+    }
+
+    // 左右间距
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        if collectionView == self.wordsQuickCollection {
+            return 20
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
