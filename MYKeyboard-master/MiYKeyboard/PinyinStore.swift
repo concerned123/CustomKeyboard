@@ -202,14 +202,8 @@ class PinyinStore {
             
             if isRepeatArr {
                 for item in firstArr {
-                    var content = ""
-                    for _ in 0..<results.count {
-                        if content.count > 0 {
-                            content += "%" + item
-                        } else {
-                            content += item
-                        }
-                    }
+                    let tempArray = Array(repeating: item, count: results.count)
+                    let content = tempArray.joined(separator: "%")
                     possibleArray.append(content)
                 }
                 
